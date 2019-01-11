@@ -11,7 +11,7 @@ Each row of output file contains a variant JSON object with keys: RS id, chromos
 
 ## Running script
 
-Clone this repo into your data directory on the Biowulf cluster /data/<username>. 
+Clone this repo into your data directory on the Biowulf cluster /data/your_username. 
 
 Create folder named `json_refsnp` in the repo's directory and place all compressed json `json.gz` files in folder.
 
