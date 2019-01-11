@@ -1,3 +1,5 @@
+.vscode
+
 json_refsnp/
 slurm*.out
 chr_*_filtered.json
