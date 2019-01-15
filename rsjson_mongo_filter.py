@@ -60,6 +60,10 @@ def getPosition(primary_refsnp, variant_type):
             if is_chrom == True and assembly == "GRCh37.p13":
                 if variant_type == "delins":
                     position = str(pos)
+                elif variant_type == "del":
+                    position = str(pos)
+                elif variant_type == "ins":
+                    position = str(pos)
                 else:
                     position = str(int(pos) + 1)
     return position
@@ -97,6 +101,7 @@ def writeJSON(rsid, chromosome, position, annotations, variant_type, ref_id):
 def main():
     print "Start creating json file(s) with filtered records. db: LDLink, collection: dbsnp151"
     filename = sys.argv[1]
+    print filename
     input_dir = 'json_refsnp/'
     with gzip.open(input_dir + filename, 'rb') as f_in:
         # limit lines read per file
