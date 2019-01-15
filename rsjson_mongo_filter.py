@@ -12,11 +12,12 @@ start_time = time.time()  # measure script's run time
 def getRSIDs(primary_refsnp):
     rsids = []
     # append rsid reference
-    rsids.append(primary_refsnp['refsnp_id'])
+    ref_id = primary_refsnp['refsnp_id']
+    rsids.append(ref_id)
     # append rsid merges
     for i in primary_refsnp['dbsnp1_merges']:
         rsids.append(i['merged_rsid'])
-    return rsids
+    return rsids, ref_id
 
 
 # find chromosome
@@ -41,7 +42,7 @@ def getAnnotations(primary_refsnp):
 def getVariantType(primary_refsnp):
     variant_type = 'NA'
     try:
-        variant_type = primary_refsnp['primary_snapshot_data']['variant_type']
+        variant_type = primary_refsnp['variant_type']
     except:
         pass
     return variant_type
@@ -50,14 +51,14 @@ def getVariantType(primary_refsnp):
 # find GRCh37 genomic position
 def getPosition(primary_refsnp, variant_type):
     position = ''
-    for i in primary_refsnp['primary_snapshot_data']['placements_with_allele']:
+    for i in primary_refsnp['placements_with_allele']:
         if len(i['placement_annot']['seq_id_traits_by_assembly']) > 0:
             assembly = i['placement_annot']['seq_id_traits_by_assembly'][0]['assembly_name']
             is_chrom = i['placement_annot']['seq_id_traits_by_assembly'][0]['is_chromosome']
             pos = i['alleles'][0]['allele']['spdi']['position']
             # only choose bp from GRCh37.p13
             if is_chrom == True and assembly == "GRCh37.p13":
-                if variant_type is "delins":
+                if variant_type == "delins":
                     position = str(pos)
                 else:
                     position = str(int(pos) + 1)
@@ -65,27 +66,28 @@ def getPosition(primary_refsnp, variant_type):
 
 
 # write output from parsing json files
-def createRecord(rsids, chromosome, position, annotations, variant_type):
+def createRecord(rsids, chromosome, position, annotations, variant_type, ref_id):
     if len(rsids) > 0:
         for rsid in rsids:
             if len(rsid) > 0 and len(chromosome) > 0 and len(position) > 0 and len(annotations) > 0 and len(variant_type) > 0:
-                writeJSON(rsid, chromosome, position, ','.join(annotations), variant_type)
+                writeJSON(rsid, chromosome, position, ','.join(annotations), variant_type, ref_id)
                 # insertMongoDB(rsid, chromosome, position, ','.join(annotations), variant_type)
             elif len(rsid) > 0 and len(chromosome) > 0 and len(position) > 0 and len(annotations) == 0 and len(variant_type) > 0:
                 # if no annotations, insert NA
-                writeJSON(rsid, chromosome, position, 'NA', variant_type)
+                writeJSON(rsid, chromosome, position, 'NA', variant_type, ref_id)
                 # insertMongoDB(rsid, chromosome, position, 'NA', variant_type)
             else:
                 pass
 
 
-def writeJSON(rsid, chromosome, position, annotations, variant_type):
+def writeJSON(rsid, chromosome, position, annotations, variant_type, ref_id):
     record = {
         "id": rsid,
         "chromosome": chromosome,
         "position": position,
         "function": annotations,
-        "type": variant_type
+        "type": variant_type,
+        "ref_id": ref_id
     }
     with open('chr_' + chromosome + '_filtered.json', 'a') as outfile:
         json.dump(record, outfile)
@@ -102,15 +104,15 @@ def main():
         for line in f_in:
             rs_obj = json.loads(line.decode('utf-8'))
             if 'primary_snapshot_data' in rs_obj:
-                rsids = getRSIDs(rs_obj)
+                rsids, ref_id = getRSIDs(rs_obj)
                 chromosome = getChromosome(f_in)
                 annotations = getAnnotations(rs_obj['primary_snapshot_data'])
-                variant_type = getVariantType(rs_obj)
-                position = getPosition(rs_obj, variant_type)
-                createRecord(rsids, chromosome, position, annotations, variant_type)
+                variant_type = getVariantType(rs_obj['primary_snapshot_data'])
+                position = getPosition(rs_obj['primary_snapshot_data'], variant_type)
+                createRecord(rsids, chromosome, position, annotations, variant_type, ref_id)
                 # limit lines read per file
                 # cnt = cnt + 1
-                # if (cnt > 50000):
+                # if (cnt > 10):
                 #     break
     print "JSON file(s) completed."
 
