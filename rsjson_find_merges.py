@@ -62,8 +62,6 @@ def main():
                 # cnt = cnt + 1
                 # if (cnt > 10):
                 #     break
-            else:
-                print line
     print "JSON file(s) completed."
 
     print("--- %s seconds ---" % (time.time() - start_time))
