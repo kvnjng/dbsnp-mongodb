@@ -20,8 +20,8 @@ def getMerges(primary_refsnp):
     return merges
 
 # find chromosome
-def getChromosome(f_in):
-    return f_in.name.split('.')[0].split('-')[1][3:]
+def getName(f_in):
+    return f_in.name.split('.')[0].split('-')[1]
 
 
 # write output from parsing json files
@@ -33,12 +33,12 @@ def getChromosome(f_in):
 #             pass
 
 
-def writeJSON(rsid, merges, chromosome):
+def writeJSON(rsid, merges, name):
     record = {
         "id": rsid,
         "merged_into": merges
     }
-    with open('chr_' + chromosome + '_merges.json', 'a') as outfile:
+    with open('refsnp-' + name + '_merges.json', 'a') as outfile:
         json.dump(record, outfile)
         outfile.write('\n')
 
@@ -54,11 +54,11 @@ def main():
         for line in f_in:
             rs_obj = json.loads(line.decode('utf-8'))
             if 'merged_snapshot_data' in rs_obj:
-                print "found one!!!", line
+                # print "found one!!!", line
                 rsid = getRSID(rs_obj)
                 merges = getMerges(rs_obj['merged_snapshot_data'])
-                chromosome = getChromosome(f_in)
-                writeJSON(rsid, merges, chromosome)
+                name = getName(f_in)
+                writeJSON(rsid, merges, name)
                 # limit lines read per file
                 # cnt = cnt + 1
                 # if (cnt > 10):
