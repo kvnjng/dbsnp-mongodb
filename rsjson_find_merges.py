@@ -25,12 +25,12 @@ def getChromosome(f_in):
 
 
 # write output from parsing json files
-def createRecord(rsid, merges, chromosome):
-    if len(rsid) > 0:
-        if len(rsid) > 0 and len(merges) > 0:
-            writeJSON(rsid, merges, chromosome)
-        else:
-            pass
+# def createRecord(rsid, merges, chromosome):
+#     if len(rsid) > 0:
+#         if len(rsid) > 0 and len(merges) > 0:
+#             writeJSON(rsid, merges, chromosome)
+#         else:
+#             pass
 
 
 def writeJSON(rsid, merges, chromosome):
@@ -38,7 +38,7 @@ def writeJSON(rsid, merges, chromosome):
         "id": rsid,
         "merged_into": merges
     }
-    with open('chr_' + chromosome + 'merges.json', 'a') as outfile:
+    with open('chr_' + chromosome + '_merges.json', 'a') as outfile:
         json.dump(record, outfile)
         outfile.write('\n')
 
@@ -54,10 +54,11 @@ def main():
         for line in f_in:
             rs_obj = json.loads(line.decode('utf-8'))
             if 'merged_snapshot_data' in rs_obj:
+                print "found one!!!", line
                 rsid = getRSID(rs_obj)
                 merges = getMerges(rs_obj['merged_snapshot_data'])
                 chromosome = getChromosome(f_in)
-                createRecord(rsid, merges, chromosome)
+                writeJSON(rsid, merges, chromosome)
                 # limit lines read per file
                 # cnt = cnt + 1
                 # if (cnt > 10):
