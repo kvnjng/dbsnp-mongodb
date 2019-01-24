@@ -3,3 +3,5 @@
 json_refsnp/
 slurm*.out
 chr_*_filtered.json
+processed_merges.json
+refsnp-merged_merges.json

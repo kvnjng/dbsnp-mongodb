@@ -1,9 +1,7 @@
 import sys
 import json
 import gzip
-import os
-from pymongo import MongoClient, ASCENDING
-from pymongo.errors import ConnectionFailure
+from pymongo import MongoClient
 import time
 start_time = time.time()  # measure script's run time
 
@@ -22,16 +20,6 @@ def getMerges(primary_refsnp):
 # find chromosome
 def getName(f_in):
     return f_in.name.split('.')[0].split('-')[1]
-
-
-# write output from parsing json files
-# def createRecord(rsid, merges, chromosome):
-#     if len(rsid) > 0:
-#         if len(rsid) > 0 and len(merges) > 0:
-#             writeJSON(rsid, merges, chromosome)
-#         else:
-#             pass
-
 
 def writeJSON(rsid, merges, name):
     record = {

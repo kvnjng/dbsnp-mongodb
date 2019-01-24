@@ -1,7 +1,6 @@
 import sys
 import json
 import gzip
-import os
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import ConnectionFailure
 import time
