@@ -118,6 +118,12 @@ def main():
                 # cnt = cnt + 1
                 # if (cnt > 10):
                 #     break
+            else:
+                with open('chr_' + chromosome + '_rejected.json', 'a') as outfile:
+                    json.dump(rs_obj, outfile)
+                    outfile.write('\n')
+
+
     print "JSON file(s) completed."
 
     print("--- %s seconds ---" % (time.time() - start_time))
