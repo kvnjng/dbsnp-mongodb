@@ -1,6 +1,7 @@
 .vscode
 
 json_refsnp/
+json_refsnp_bz2/
 slurm*.out
 chr_*_filtered.json
 processed_merges.json
